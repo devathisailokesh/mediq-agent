@@ -2,15 +2,11 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install dependencies first — cached layer, only rebuilds when requirements.txt changes
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy entire project so ui/ is available
 COPY . .
 
-# HF Spaces only exposes port 7860
-EXPOSE 7860
+EXPOSE 8501
 
-# API_BASE_URL env var is set in HF Space secrets to point at the API space URL
-CMD ["streamlit", "run", "ui/app.py", "--server.port", "7860", "--server.address", "0.0.0.0"]
+CMD ["streamlit", "run", "ui/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]

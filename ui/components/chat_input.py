@@ -1,13 +1,12 @@
 """
 Chat input component for the MediQ Streamlit application.
 
-Handles user input, API calls, error display, and session state updates.
+Handles user input, agent calls, error display, and session state updates.
 Renders both the user bubble and the assistant response bubble before
 persisting messages to session state — so on rerun, chat_history.py
 replays them correctly.
 """
 
-import requests
 import streamlit as st
 
 from ui import api_client, state
@@ -20,13 +19,13 @@ def render(max_papers: int) -> None:
 
     Flow on submission:
         1. User question is appended to state and rendered immediately.
-        2. API is called under a spinner inside the assistant bubble.
+        2. Agent is called under a spinner inside the assistant bubble.
         3. Answer and citations are rendered and persisted to state.
 
     Does nothing when the input box is empty (no submission).
 
     Args:
-        max_papers: PubMed paper limit forwarded to the backend request.
+        max_papers: PubMed paper limit passed to the agent.
     """
     question = st.chat_input("Ask a medical question...")
 
@@ -44,14 +43,11 @@ def render(max_papers: int) -> None:
 
 def _fetch_and_render(question: str, max_papers: int) -> None:
     """
-    Call the backend API, render the response, and persist it to state.
-
-    All error cases (connection failure, HTTP error, timeout, unexpected
-    exception) display a user-facing error message instead of a traceback.
+    Call the agent, render the response, and persist it to state.
 
     Args:
-        question: Medical question to send to the API.
-        max_papers: PubMed paper retrieval limit to include in the request.
+        question: Medical question to run through the agent pipeline.
+        max_papers: PubMed paper retrieval limit.
     """
     try:
         data = api_client.ask_question(
@@ -68,17 +64,5 @@ def _fetch_and_render(question: str, max_papers: int) -> None:
 
         state.append_message("assistant", answer, citations=citations)
 
-    except requests.exceptions.ConnectionError:
-        st.error(
-            "Cannot connect to the API. Make sure the server is running:\n"
-            "```\npython -m uvicorn src.api.main:app --reload\n```"
-        )
-    except requests.exceptions.HTTPError as exc:
-        detail = exc.response.json().get("detail", str(exc))
-        st.error(f"API error: {detail}")
-    except requests.exceptions.Timeout:
-        st.error(
-            "Request timed out. Try reducing the number of papers or try again."
-        )
     except Exception as exc:
-        st.error(f"Unexpected error: {exc}")
+        st.error(f"Something went wrong: {exc}")

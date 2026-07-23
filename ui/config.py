@@ -6,9 +6,8 @@ so they can be changed in one place without touching any component logic.
 """
 
 # ── API ───────────────────────────────────────────────────────────────────────
-# Reads from env var so Docker can point it at the 'api' service by name.
-# Falls back to localhost for local development.
 import os
+
 API_BASE_URL: str = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 API_TIMEOUT_SECONDS: int = 60
 

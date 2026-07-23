@@ -9,15 +9,6 @@ import time
 import uuid
 from typing import Optional
 
-# Medical domain keywords used by the content guardrail
-_MEDICAL_KEYWORDS = {
-    "disease", "disorder", "syndrome", "symptom", "treatment", "therapy",
-    "drug", "medication", "dose", "dosage", "clinical", "patient", "diagnosis",
-    "cancer", "tumor", "infection", "vaccine", "surgery", "hospital", "medical",
-    "health", "pain", "blood", "heart", "lung", "kidney", "liver", "brain",
-    "diabetes", "hypertension", "antibiotic", "virus", "bacteria", "gene",
-    "protein", "enzyme", "trial", "study", "evidence", "risk", "prevention",
-}
 
 from logs.logger import get_logger
 from src.agents.planner import PlannerAgent
@@ -84,27 +75,6 @@ class MediQAgent:
         steps = []
 
         logger.info("MediQAgent.run | session=%s | query='%s'", session_id, query[:80])
-
-        # Content guardrail — reject clearly non-medical questions early
-        if not self._is_medical_query(query):
-            logger.warning("Content guardrail triggered | query='%s'", query[:80])
-            return {
-                "session_id": session_id,
-                "question": query,
-                "answer": (
-                    "MediQ is a medical research assistant and can only answer "
-                    "healthcare-related questions. Please ask about a disease, "
-                    "treatment, medication, or clinical topic."
-                ),
-                "citations": [],
-                "trace": {
-                    "session_id": session_id,
-                    "query": query,
-                    "steps": [],
-                    "papers_retrieved": 0,
-                    "total_duration_seconds": 0.0,
-                },
-            }
 
         try:
             history = self._store.format_history_for_prompt(session_id)
@@ -186,22 +156,3 @@ class MediQAgent:
             logger.error("Unexpected pipeline error: %s", exc, exc_info=True)
             raise RuntimeError(f"Pipeline error: {exc}") from exc
 
-    @staticmethod
-    def _is_medical_query(query: str) -> bool:
-        """
-        Content guardrail — returns False for clearly non-medical questions.
-
-        Uses keyword matching against a curated medical vocabulary.
-        Short-circuits to True when any medical term is found.
-
-        Args:
-            query: Raw user question.
-
-        Returns:
-            bool: True if the query appears medical, False otherwise.
-        """
-        try:
-            words = set(query.lower().split())
-            return bool(words & _MEDICAL_KEYWORDS)
-        except Exception:
-            return True  

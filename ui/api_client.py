@@ -1,19 +1,26 @@
 """
-HTTP client for the MediQ FastAPI backend.
+Backend client for the MediQ Streamlit application.
 
-Wraps all network calls in typed functions so components never construct
-raw requests. URL paths, timeout, and error propagation all live here —
-callers only deal with Python dicts and documented exceptions.
+Calls MediQAgent directly — no FastAPI server needed for the UI.
+The FastAPI layer (src/api/) can be run independently to showcase
+or share the REST API separately.
 """
 
-import requests
+import sys
+from pathlib import Path
 
-from ui.config import API_BASE_URL, API_TIMEOUT_SECONDS
+# Add project root so src.agents imports resolve correctly
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from src.agents.agent import MediQAgent
+
+# Initialised once at import time — avoids creating a new Groq client per question
+_agent = MediQAgent()
 
 
 def ask_question(question: str, session_id: str, max_papers: int) -> dict:
     """
-    POST /query — run the full agent pipeline for a medical question.
+    Run the full agent pipeline for a medical question.
 
     Args:
         question: Medical question submitted by the user.
@@ -21,24 +28,26 @@ def ask_question(question: str, session_id: str, max_papers: int) -> dict:
         max_papers: Maximum number of PubMed papers to retrieve (1–20).
 
     Returns:
-        dict: Parsed JSON response containing:
+        dict: Response containing:
             - 'answer'    (str)  — synthesized medical answer.
-            - 'citations' (list) — list of citation dicts with
-                                   'pubmed_id', 'title', and 'url'.
+            - 'citations' (list) — list of dicts with 'pubmed_id', 'title', 'url'.
 
     Raises:
-        requests.exceptions.ConnectionError: If the API server is unreachable.
-        requests.exceptions.HTTPError: If the API returns a 4xx or 5xx status.
-        requests.exceptions.Timeout: If the request exceeds API_TIMEOUT_SECONDS.
+        RuntimeError: If the agent pipeline fails.
     """
-    response = requests.post(
-        f"{API_BASE_URL}/query",
-        json={
-            "question": question,
-            "session_id": session_id,
-            "max_papers": max_papers,
-        },
-        timeout=API_TIMEOUT_SECONDS,
+    result = _agent.run(
+        query=question,
+        session_id=session_id,
+        max_papers=max_papers,
     )
-    response.raise_for_status()
-    return response.json()
+    return {
+        "answer": result["answer"],
+        "citations": [
+            {
+                "pubmed_id": c["pubmed_id"],
+                "title": c["title"],
+                "url": c["url"],
+            }
+            for c in result["citations"]
+        ],
+    }
