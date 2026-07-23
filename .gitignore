@@ -1,0 +1,22 @@
+# Environment — never commit real keys
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+
+# Database
+*.db
+
+# Logs
+logs/*.log
+
+# Streamlit
+.streamlit/
+
+# OS
+.DS_Store
+Thumbs.db

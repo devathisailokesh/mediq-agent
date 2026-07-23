@@ -1,0 +1,42 @@
+[
+  {
+    "id": "scenario_1",
+    "question": "What are the latest treatments for Type 2 diabetes?",
+    "expected_keywords": ["metformin", "GLP-1", "SGLT2", "insulin", "lifestyle"],
+    "expected_citations": true,
+    "domain": "endocrinology",
+    "description": "Common chronic disease — should return well-established treatment options"
+  },
+  {
+    "id": "scenario_2",
+    "question": "What are the side effects of metformin in elderly patients?",
+    "expected_keywords": ["gastrointestinal", "lactic acidosis", "renal", "vitamin B12"],
+    "expected_citations": true,
+    "domain": "geriatrics / endocrinology",
+    "description": "Drug safety in a specific population — tests population-specific filtering"
+  },
+  {
+    "id": "scenario_3",
+    "question": "What is the efficacy of mRNA COVID-19 vaccines against Omicron variants?",
+    "expected_keywords": ["mRNA", "Omicron", "booster", "effectiveness", "BNT162b2"],
+    "expected_citations": true,
+    "domain": "infectious disease / immunology",
+    "description": "Recent and evolving topic — tests retrieval of up-to-date research"
+  },
+  {
+    "id": "scenario_4",
+    "question": "What are current guidelines for hypertension management?",
+    "expected_keywords": ["blood pressure", "ACE inhibitor", "lifestyle", "antihypertensive", "systolic"],
+    "expected_citations": true,
+    "domain": "cardiology",
+    "description": "Clinical guideline retrieval — tests structured medical guideline content"
+  },
+  {
+    "id": "scenario_5",
+    "question": "How does sleep deprivation affect cognitive function?",
+    "expected_keywords": ["sleep", "cognitive", "memory", "attention", "performance"],
+    "expected_citations": true,
+    "domain": "neuroscience / sleep medicine",
+    "description": "Broader health question — tests agent on non-disease topic"
+  }
+]
