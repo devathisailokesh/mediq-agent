@@ -1,0 +1,82 @@
+[
+  {
+    "id": "scenario_1",
+    "question": "What are the latest treatments for Type 2 diabetes?",
+    "domain": "endocrinology",
+    "passed": true,
+    "score": 0.73,
+    "keyword_score": 0.2,
+    "citation_score": 1.0,
+    "length_score": 1.0,
+    "keywords_matched": [
+      "glp-1"
+    ],
+    "keywords_missed": [
+      "metformin",
+      "sglt2",
+      "insulin",
+      "lifestyle"
+    ],
+    "citations_found": 15,
+    "answer_length": 1891,
+    "duration_seconds": 9.14,
+    "answer_preview": "The latest treatments for Type 2 diabetes include several medications that have shown promising results in managing the condition and its related complications.\n\n**Effective treatments:**\n- **Tirzepat"
+  },
+  {
+    "id": "scenario_2",
+    "question": "What are the side effects of metformin in elderly patients?",
+    "domain": "geriatrics / endocrinology",
+    "passed": true,
+    "score": 0.67,
+    "keyword_score": 0.0,
+    "citation_score": 1.0,
+    "length_score": 1.0,
+    "keywords_matched": [],
+    "keywords_missed": [
+      "gastrointestinal",
+      "lactic acidosis",
+      "renal",
+      "vitamin b12"
+    ],
+    "citations_found": 5,
+    "answer_length": 1023,
+    "duration_seconds": 23.74,
+    "answer_preview": "The side effects of metformin in elderly patients are not specified in the available research findings.\n\n**Available information:**\n- The retrieved papers focus on the efficacy and safety of various t"
+  },
+  {
+    "id": "scenario_3",
+    "question": "What is the efficacy of mRNA COVID-19 vaccines against Omicron variants?",
+    "domain": "infectious disease / immunology",
+    "passed": true,
+    "score": 1.0,
+    "keyword_score": 1.0,
+    "citation_score": 1.0,
+    "length_score": 1.0,
+    "keywords_matched": [
+      "mrna",
+      "omicron",
+      "booster",
+      "effectiveness",
+      "bnt162b2"
+    ],
+    "keywords_missed": [],
+    "citations_found": 10,
+    "answer_length": 1640,
+    "duration_seconds": 22.89,
+    "answer_preview": "The mRNA COVID-19 vaccines have shown reduced efficacy against the Omicron variant, but a third dose can significantly improve protection.\n\n**Efficacy against Omicron:**\n- The BNT162b2 mRNA vaccine ha"
+  },
+  {
+    "id": "scenario_4",
+    "question": "What are current guidelines for hypertension management?",
+    "passed": false,
+    "score": 0.0,
+    "error": "Summarization failed: [SummarizerAgent/Groq] Failed after 3 attempts. Last error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01j764k34ket0rp02dpvhfbbz7` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99418, Requested 1595. Please try again in 14m35.232s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+  },
+  {
+    "id": "scenario_5",
+    "question": "How does sleep deprivation affect cognitive function?",
+    "passed": false,
+    "score": 0.0,
+    "error": "Planning failed: [PlannerAgent/Groq] Failed after 3 attempts. Last error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01j764k34ket0rp02dpvhfbbz7` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99411, Requested 848. Please try again in 3m43.775999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+  }
+]

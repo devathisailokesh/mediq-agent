@@ -2,33 +2,31 @@
 
 Agentic AI system for medical Q&A using PubMed RAG and Groq LLM.
 
+Live demo: [mediq-agent.streamlit.app](https://mediq-agent.streamlit.app)
+
 ---
 
 ## Architecture
 
+Three-agent pipeline:
+
 ```
-User Query
-    ↓
-[FastAPI Backend]  ←  Pydantic validates input/output
-    ↓
-[Planner Agent]        — chain-of-thought search strategy
-    ↓
-[Researcher Agent]     — PubMed RAG (fetch + extract findings)
-    ↓
-[Summarizer Agent]     — self-critique synthesis
-    ↓
-[SQLite Memory]        — conversation persistence
-    ↓
-Streaming JSON Response
+Question
+  ↓
+[1] PLANNER     → Generates PubMed search queries (chain-of-thought)
+  ↓
+[2] RESEARCHER  → Fetches papers + extracts findings (RAG)
+  ↓
+[3] SUMMARIZER  → Synthesizes cited answer (self-critique)
+  ↓
+Answer + Citations
 ```
 
-### Multi-Agent Pipeline
-
-| Agent | Role | Technique |
-|-------|------|-----------|
-| **Planner** | Converts question → PubMed search queries | Chain-of-thought |
-| **Researcher** | Fetches papers, extracts findings | RAG |
-| **Summarizer** | Writes final cited answer | Self-critique |
+| Agent | Input | Output | Technique |
+|---|---|---|---|
+| Planner | Question | Search queries | Chain-of-thought reasoning |
+| Researcher | Queries | Key findings | PubMed RAG |
+| Summarizer | Findings | Final answer | Self-critique verification |
 
 ---
 
@@ -37,35 +35,20 @@ Streaming JSON Response
 ```
 mediq-agent/
 ├── src/
-│   ├── agents/
-│   │   ├── planner.py       # Planner agent
-│   │   ├── researcher.py    # Researcher agent (PubMed RAG)
-│   │   └── summarizer.py    # Summarizer agent (self-critique)
-│   ├── api/
-│   │   ├── main.py          # FastAPI app + router registration
-│   │   └── router/
-│   │       ├── query.py     # POST /query
-│   │       ├── history.py   # GET /history/{session_id}
-│   │       └── health.py    # GET /health
-│   ├── config/
-│   │   └── settings.py      # Pydantic BaseSettings
-│   ├── memory/
-│   │   └── store.py         # SQLite conversation memory
-│   ├── models/
-│   │   └── schemas/
-│   │       ├── pubmed.py    # PubMedPaper schema
-│   │       ├── agent.py     # AgentStep, AgentTrace, SearchPlan
-│   │       ├── request.py   # QueryRequest
-│   │       └── response.py  # QueryResponse, HealthResponse, etc.
-│   ├── prompts/
-│   │   └── templates.py     # All system prompts and few-shot examples
-│   └── tools/
-│       └── pubmed.py        # PubMed E-utilities API client
-├── logs/
-│   └── logger.py            # Centralised logger (file + console)
+│   ├── agents/              # Planner, Researcher, Summarizer
+│   ├── tools/               # PubMed API client
+│   ├── prompts/             # System prompts + few-shot examples
+│   ├── schemas/             # Input/output validation
+│   ├── config/              # Settings (.env)
+│   ├── memory/              # SQLite conversation store
+│   ├── utils/               # Retry logic
+│   ├── api/                 # Optional FastAPI layer
+│   └── agent.py             # CLI entry point
+├── ui/                      # Streamlit UI
 ├── tests/
 │   └── scenarios.json       # 5 evaluation scenarios
 ├── evaluate.py              # Evaluation script
+├── AGENT_RUN_REPORT.md      # Assessment documentation
 ├── requirements.txt
 └── README.md
 ```
@@ -77,133 +60,89 @@ mediq-agent/
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/your-username/mediq-agent
+git clone https://github.com/devathisailokesh/mediq-agent
 cd mediq-agent
 pip install -r requirements.txt
 ```
 
 ### 2. Create `.env` file
 
-Create a file named `.env` in the project root:
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your keys:
 
 ```
 GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-TEMPERATURE=0.1
-MAX_TOKENS=2048
-MAX_RETRIES=3
-RETRY_DELAY=2.0
-PUBMED_API_KEY=
-PUBMED_MAX_RESULTS=5
-DB_PATH=memory.db
-LOG_LEVEL=INFO
-API_HOST=0.0.0.0
-API_PORT=8000
 ```
 
 Get a free Groq API key at: https://console.groq.com
 
-### 3. Run the API
+---
+
+## Running the App
+
+### Streamlit UI (primary — no FastAPI needed)
 
 ```bash
-uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+streamlit run ui/app.py
 ```
 
-API docs available at: http://localhost:8000/docs
+Opens at: http://localhost:8501
 
 ---
 
-## Usage
-
-### Ask a medical question
+### CLI (optional)
 
 ```bash
-curl -X POST http://localhost:8000/query \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What are the latest treatments for Type 2 diabetes?"}'
-```
-
-### Get conversation history
-
-```bash
-curl http://localhost:8000/history/{session_id}
-```
-
-### Health check
-
-```bash
-curl http://localhost:8000/health
+python src/agent.py --query "What are the latest treatments for Type 2 diabetes?"
+python src/agent.py --query "Side effects of metformin in elderly?" --max-papers 3
+python src/agent.py --query "Hypertension guidelines" --output results.json
 ```
 
 ---
 
 ## Evaluation
 
-Start the API first, then run:
-
 ```bash
 python evaluate.py
-python evaluate.py --scenarios tests/scenarios.json
 ```
 
-Results are saved to `logs/evaluation_results.json`.
+Scores on 5 test scenarios. Results saved to `logs/evaluation_results.json`.
 
 ---
 
-## Docker
-
-### Dockerfile
-
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-### docker-compose.yml
-
-```yaml
-version: "3.9"
-services:
-  mediq-agent:
-    build: .
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    volumes:
-      - ./logs:/app/logs
-      - ./memory.db:/app/memory.db
-```
-
-### Run with Docker
-
-```bash
-docker build -t mediq-agent .
-docker run -p 8000:8000 --env-file .env mediq-agent
-```
+---
 
 ---
 
-## API Keys
+## Deployment
 
-| Service | Cost | Required |
-|---------|------|----------|
-| Groq API | Free | Yes — get at console.groq.com |
-| PubMed API | Free | No — optional, improves rate limits |
+Deployed on Streamlit Community Cloud. To deploy your own:
+1. Push to GitHub (`.env` is gitignored)
+2. Go to [share.streamlit.io](https://share.streamlit.io) → New app
+3. Set main file: `ui/app.py`
+4. Add secret: `GROQ_API_KEY = "your_key"`
 
 ---
 
-## Test Scenarios
+## Prompt Engineering Techniques
 
-| # | Domain | Question |
-|---|--------|----------|
-| 1 | Endocrinology | Latest treatments for Type 2 diabetes |
-| 2 | Geriatrics | Side effects of metformin in elderly |
-| 3 | Infectious Disease | mRNA vaccine efficacy vs Omicron |
-| 4 | Cardiology | Hypertension management guidelines |
-| 5 | Neuroscience | Sleep deprivation and cognitive function |
+| Technique | Where |
+|---|---|
+| Chain-of-thought | Planner system prompt — step-by-step query generation |
+| Few-shot examples | All 3 agent prompts |
+| Self-critique | Summarizer — verification checklist before finalizing |
+| RAG | Researcher — PubMed abstracts injected into LLM context |
+| Structured output | Planner JSON → Pydantic `SearchPlan` validation |
+
+---
+
+## Full Trace & Detailed Results
+
+See **AGENT_RUN_REPORT.md** for:
+- Complete agent execution traces
+- Evaluation results (5 test scenarios)
+- Design decisions & rationale
+- Advanced techniques documentation

@@ -55,7 +55,7 @@ class SummarizerAgent:
             RuntimeError: If all LLM API retries are exhausted.
         """
         try:
-            logger.info("SummarizerAgent.summarize | question='%s'", question[:80])
+            logger.info("[SUMMARIZER INPUT] Question: %s | Papers: %d | Summary Length: %d | History: %s", question[:60], len(papers), len(research_summary), "yes" if history else "no")
 
             paper_metadata = self._format_paper_metadata(papers)
             user_message = SUMMARIZER_USER_TEMPLATE.format(
@@ -73,7 +73,7 @@ class SummarizerAgent:
                 input=question,
                 output=answer[:300] + "..." if len(answer) > 300 else answer,
             )
-            logger.info("SummarizerAgent produced answer | length=%d chars", len(answer))
+            logger.info("[SUMMARIZER OUTPUT] Answer Length: %d chars | Preview: %s", len(answer), answer[:100])
             return answer, step
         except RuntimeError:
             raise

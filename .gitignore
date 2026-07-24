@@ -11,8 +11,6 @@ venv/
 # Database
 *.db
 
-# Logs
-logs/*.log
 
 # Streamlit
 .streamlit/

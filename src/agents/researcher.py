@@ -55,7 +55,8 @@ class ResearcherAgent:
             RuntimeError: If the research pipeline fails unexpectedly.
         """
         try:
-            logger.info("ResearcherAgent.research | queries=%d", len(plan.search_queries))
+            logger.info("[RESEARCHER INPUT] Question: %s | Queries: %d | Max Papers: %s", question[:60], len(plan.search_queries), max_papers or "default")
+
             papers = self._fetch_papers(plan, max_papers)
 
             if not papers:
@@ -113,13 +114,14 @@ class ResearcherAgent:
                         if paper.pubmed_id not in seen_ids:
                             seen_ids.add(paper.pubmed_id)
                             all_papers.append(paper)
-                    logger.info("Query '%s' returned %d new papers", query[:60], len(papers))
                 except Exception as exc:
                     logger.error(
                         "PubMed query failed | query='%s' | error=%s", query, exc, exc_info=True,
                     )
 
-            logger.info("Total unique papers fetched: %d", len(all_papers))
+            logger.info("[RESEARCHER OUTPUT] Papers Fetched: %d", len(all_papers))
+            for paper in all_papers:
+                logger.info("  PMID:%s | %s", paper.pubmed_id, paper.title[:70])
             return all_papers
         except Exception as exc:
             logger.error(
@@ -177,7 +179,7 @@ class ResearcherAgent:
                 base_delay=settings.retry_delay,
                 label="ResearcherAgent/Groq",
             )
-            logger.info("Researcher summary generated | length=%d", len(summary))
+            logger.info("[RESEARCHER SUMMARY] Length: %d chars | Preview: %s", len(summary), summary[:100])
             return summary
         except RuntimeError:
             raise

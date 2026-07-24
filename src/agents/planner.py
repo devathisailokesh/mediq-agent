@@ -47,8 +47,9 @@ class PlannerAgent:
             RuntimeError: If all API retries are exhausted.
         """
         try:
+            logger.info("[PLANNER INPUT] Question: %s | History: %s", question, "yes" if history else "no")
+
             user_message = PLANNER_USER_TEMPLATE.format(question=question, history=history)
-            logger.info("PlannerAgent.plan | question='%s'", question[:80])
 
             raw_response = self._call_llm_with_retry(user_message)
             plan, step = self._parse_response(question, raw_response)
@@ -129,11 +130,9 @@ class PlannerAgent:
                 input=question,
                 output=json_str,
             )
-            logger.info(
-                "PlannerAgent produced plan | domain=%s | queries=%d",
-                plan.medical_domain,
-                len(plan.search_queries),
-            )
+            logger.info("[PLANNER OUTPUT] Domain: %s | Queries: %d | Reasoning: %s", plan.medical_domain, len(plan.search_queries), plan.reasoning[:80])
+            for i, q in enumerate(plan.search_queries, 1):
+                logger.info("  Query %d: %s", i, q)
             return plan, step
         except (ValueError, RuntimeError):
             raise
