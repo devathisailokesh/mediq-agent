@@ -13,7 +13,6 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-
 LOG_DIR = Path(__file__).parent
 LOG_FORMAT = (
     "%(asctime)s | %(levelname)-8s | %(name)s | "
