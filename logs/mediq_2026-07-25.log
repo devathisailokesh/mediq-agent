@@ -1,0 +1,52 @@
+2026-07-25 11:31:11 | INFO     | src.agents.planner | planner.py:__init__:32 | PlannerAgent initialised | model=llama-3.3-70b-versatile
+2026-07-25 11:31:11 | INFO     | src.tools.pubmed | pubmed.py:__init__:36 | PubMedClient initialised | base_url=https://eutils.ncbi.nlm.nih.gov/entrez/eutils
+2026-07-25 11:31:11 | INFO     | src.agents.researcher | researcher.py:__init__:35 | ResearcherAgent initialised | model=llama-3.3-70b-versatile
+2026-07-25 11:31:11 | INFO     | src.agents.summarizer | summarizer.py:__init__:33 | SummarizerAgent initialised | model=llama-3.3-70b-versatile
+2026-07-25 11:31:11 | INFO     | src.memory.store | store.py:__init__:31 | MemoryStore initialised | db=memory.db
+2026-07-25 11:31:11 | INFO     | src.agents.agent | agent.py:__init__:43 | MediQAgent ready
+2026-07-25 11:31:11 | INFO     | src.memory.store | store.py:__init__:31 | MemoryStore initialised | db=memory.db
+2026-07-25 11:31:23 | INFO     | src.agents.agent | agent.py:run:77 | MediQAgent.run | session=0d1b4b96-b4f2-45aa-9a51-e733d5ff389a | query='what is a type 2 diabetes.?'
+2026-07-25 11:31:23 | INFO     | src.agents.agent | agent.py:run:83 | Step 1: Planning
+2026-07-25 11:31:23 | INFO     | src.agents.planner | planner.py:plan:50 | [PLANNER INPUT] Question: what is a type 2 diabetes.? | History: yes
+2026-07-25 11:31:24 | INFO     | src.agents.planner | planner.py:_parse_response:133 | [PLANNER OUTPUT] Domain: endocrinology | Queries: 3 | Reasoning: The question asks for information on type 2 diabetes, a common condition in endo
+2026-07-25 11:31:24 | INFO     | src.agents.planner | planner.py:_parse_response:135 |   Query 1: type 2 diabetes mellitus[MeSH]
+2026-07-25 11:31:24 | INFO     | src.agents.planner | planner.py:_parse_response:135 |   Query 2: pathogenesis type 2 diabetes insulin resistance
+2026-07-25 11:31:24 | INFO     | src.agents.planner | planner.py:_parse_response:135 |   Query 3: type 2 diabetes diagnosis management 2022:2024[PDat]
+2026-07-25 11:31:24 | INFO     | src.agents.agent | agent.py:run:92 | Step 2: Researching
+2026-07-25 11:31:24 | INFO     | src.agents.researcher | researcher.py:research:58 | [RESEARCHER INPUT] Question: what is a type 2 diabetes.? | Queries: 3 | Max Papers: 5
+2026-07-25 11:31:24 | INFO     | src.tools.pubmed | pubmed.py:search:144 | Searching PubMed | query='type 2 diabetes mellitus[MeSH]' | max_results=5
+2026-07-25 11:31:25 | INFO     | src.tools.pubmed | pubmed.py:search:154 | PubMed search returned 5 PMIDs
+2026-07-25 11:31:25 | INFO     | src.tools.pubmed | pubmed.py:fetch_papers:183 | Fetching abstracts for 5 PMIDs
+2026-07-25 11:31:26 | INFO     | src.tools.pubmed | pubmed.py:fetch_papers:191 | Parsed 5 papers from efetch response
+2026-07-25 11:31:26 | INFO     | src.tools.pubmed | pubmed.py:search:144 | Searching PubMed | query='pathogenesis type 2 diabetes insulin resistance' | max_results=5
+2026-07-25 11:31:27 | INFO     | src.tools.pubmed | pubmed.py:search:154 | PubMed search returned 5 PMIDs
+2026-07-25 11:31:27 | INFO     | src.tools.pubmed | pubmed.py:fetch_papers:183 | Fetching abstracts for 5 PMIDs
+2026-07-25 11:31:29 | INFO     | src.tools.pubmed | pubmed.py:fetch_papers:191 | Parsed 5 papers from efetch response
+2026-07-25 11:31:29 | INFO     | src.tools.pubmed | pubmed.py:search:144 | Searching PubMed | query='type 2 diabetes diagnosis management 2022:2024[PDat]' | max_results=5
+2026-07-25 11:31:30 | INFO     | src.tools.pubmed | pubmed.py:search:154 | PubMed search returned 5 PMIDs
+2026-07-25 11:31:30 | INFO     | src.tools.pubmed | pubmed.py:fetch_papers:183 | Fetching abstracts for 5 PMIDs
+2026-07-25 11:31:32 | INFO     | src.tools.pubmed | pubmed.py:fetch_papers:191 | Parsed 5 papers from efetch response
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:122 | [RESEARCHER OUTPUT] Papers Fetched: 15
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:42334912 | Tirzepatide.
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:42417102 | Management of Type 2 Diabetes Mellitus: Targeting Gut Microbiome Thera
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:42366306 | Lipid Metabolic Disorders: a Pivotal Driver in Type 2 Diabetes Mellitu
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:42284955 | Anti-type 2 diabetes mellitus mechanisms and structural characteristic
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:42313539 | Periodontitis and type 2 diabetes.
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:39940862 | Type 2 Diabetes Mellitus: New Pathogenetic Mechanisms, Treatment and t
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:37152942 | Obesity and type 2 diabetes mellitus: connections in epidemiology, pat
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:32832560 | The Intricate Relationship between Type 2 Diabetes Mellitus (T2DM), In
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:11800065 | Risk factors for type 2 diabetes mellitus.
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:15308380 | Pathogenesis of type 2 diabetes mellitus.
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:39493778 | A critical review on diabetes mellitus type 1 and type 2 management ap
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:38015216 | Obesity Management in Adults: A Review.
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:35568946 | Cardiovascular disease in type 2 diabetes mellitus: progress toward pe
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:38456601 | SGLT2 inhibitors: from glucose-lowering to cardiovascular benefits.
+2026-07-25 11:31:32 | INFO     | src.agents.researcher | researcher.py:_fetch_papers:124 |   PMID:37193856 | Cardiovascular risk in diabetes mellitus: epidemiology, assessment and
+2026-07-25 11:31:32 | WARNING  | src.agents.researcher | researcher.py:_summarise_papers:156 | Abstracts block truncated to 12000 chars to stay within context limit
+2026-07-25 11:31:33 | INFO     | src.agents.researcher | researcher.py:_summarise_papers:182 | [RESEARCHER SUMMARY] Length: 1795 chars | Preview: Key findings from retrieved papers:
+1. Type 2 diabetes mellitus (T2DM) is a chronic disease characte
+2026-07-25 11:31:33 | INFO     | src.agents.agent | agent.py:run:103 | Step 3: Summarizing
+2026-07-25 11:31:33 | INFO     | src.agents.summarizer | summarizer.py:summarize:58 | [SUMMARIZER INPUT] Question: what is a type 2 diabetes.? | Papers: 15 | Summary Length: 1795 | History: yes
+2026-07-25 11:31:35 | INFO     | src.agents.summarizer | summarizer.py:summarize:76 | [SUMMARIZER OUTPUT] Answer Length: 1794 chars | Preview: Type 2 diabetes is a chronic disease characterized by high blood glucose and systemic metabolic dysf
+2026-07-25 11:31:35 | INFO     | src.memory.store | store.py:save_turn:91 | Saved turn | session_id=0d1b4b96-b4f2-45aa-9a51-e733d5ff389a
+2026-07-25 11:31:35 | INFO     | src.agents.agent | agent.py:run:139 | MediQAgent.run complete | papers=15 | duration=11.73s
